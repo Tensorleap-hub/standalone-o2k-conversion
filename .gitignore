@@ -1,0 +1,11 @@
+
+# IDE 
+.idea/*
+.DS_Store
+**__pycache__/
+.python-version
+.vscode
+
+# Files
+*.h5
+*.onnx
