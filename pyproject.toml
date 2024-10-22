@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "standalone-onnx2keras-conversion"
+version = "0.1.0"
+description = ""
+authors = ["ranhomri <ran.homri@tensorleap.ai>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.8, <3.11"
+onnx2kerastl = "^0.0.149"
+tensorflow-macos = "2.11.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
