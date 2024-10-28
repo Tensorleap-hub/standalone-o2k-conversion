@@ -67,9 +67,9 @@ def redirect_stdout_stderr():
 def get_keras_model(onnx_model_path):
     logging.info(f"Loading ONNX model from {onnx_model_path}")
     onnx_model = onnx.load(onnx_model_path)
-    input_name = onnx_model.graph.input[0].name
+    input_features = [inp.name for inp in onnx_model.graph.input]
     logging.info(f"Converting ONNX model to Keras model")
-    keras_model = onnx_to_keras(onnx_model, [input_name]).converted_model
+    keras_model = onnx_to_keras(onnx_model, input_features).converted_model
     keras_model = convert_channels_first_to_last(keras_model, should_transform_inputs_and_outputs=False, verbose=True)
     return keras_model
 
@@ -109,7 +109,7 @@ def test_loading_time(model_path, t):
     if p.is_alive():
         p.terminate()
         p.join()
-        logging.warning(f"Loading exceeded {t} seconds.")
+        logging.info(f"Loading exceeded {t} seconds.")
         return False  # Loading time exceeded t seconds
     else:
         load_time = queue.get()
