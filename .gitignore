@@ -9,3 +9,4 @@
 # Files
 *.h5
 *.onnx
+logs.txt
