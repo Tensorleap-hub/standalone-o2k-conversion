@@ -121,21 +121,23 @@ def test_loading_time(model_path, t):
 
 def find_first_problematic_layer(model, t):
     logging.info(f"Total number of layers: {len(model.layers)}")
-    logging.info("Looking for problematic layer...")
+    logging.info("Testing each layer incrementally...")
 
-    low = 0
-    high = len(model.layers) - 1
     model_path = 'temp_model.h5'  # Temporary file to save the model
+    loading_times = []
+    problematic_layers = []
+    initial_layer = 900
+    for idx in range(len(model.layers) - initial_layer):
+        idx = idx + initial_layer - 1
+        layer_name = model.layers[idx].name
+        logging.info(f"Testing layers up to index {idx} ({layer_name})")
 
-    while low <= high:
-        mid = (low + high) // 2
-        logging.info(f"Testing layers up to index {mid} ({model.layers[mid].name})")
+        try:
+            # Trim the model up to the idx index
+            trimmed_model = trim_model(model, idx)
 
-        # Trim the model up to the mid index
-        trimmed_model = trim_model(model, mid)
-
-        # Save the trimmed model
-        save_model(trimmed_model, model_path)
+            # Save the trimmed model
+            save_model(trimmed_model, model_path)
 
         # Test loading time
         success, load_time = test_loading_time(model_path, t)
