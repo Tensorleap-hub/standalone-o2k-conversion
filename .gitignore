@@ -5,6 +5,7 @@
 **__pycache__/
 .python-version
 .vscode
+sandbox/
 
 # Files
 *.h5
