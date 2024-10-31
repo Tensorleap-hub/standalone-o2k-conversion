@@ -109,17 +109,17 @@ def test_loading_time(model_path, t):
     if p.is_alive():
         p.terminate()
         p.join()
-        logging.info(f"Loading exceeded {t} seconds.")
-        return False  # Loading time exceeded t seconds
+        logging.error(f"Loading exceeded {t} seconds.")
+        return False, t  # Indicate that loading time exceeded t seconds
     else:
         load_time = queue.get()
         if load_time is None:
             logging.error(f"Loading failed due to an error.")
-            return False
+            return False, None
         else:
-            return True  # Loading completed successfully within t seconds
+            return True, load_time  # Return success status and actual loading time
 
-def find_problematic_layer(model, t):
+def find_first_problematic_layer(model, t):
     logging.info(f"Total number of layers: {len(model.layers)}")
     logging.info("Looking for problematic layer...")
 
@@ -138,16 +138,20 @@ def find_problematic_layer(model, t):
         save_model(trimmed_model, model_path)
 
         # Test loading time
-        success = test_loading_time(model_path, t)
+        success, load_time = test_loading_time(model_path, t)
 
         # Delete the temporary model file
-        if os.path.exists(model_path):
-            os.remove(model_path)
+        # if os.path.exists(model_path):
+        #     os.remove(model_path)
 
         if success:
-            logging.info(f"Loading succeeded within {t} seconds.")
+            logging.info(f"Loading succeeded in {load_time:.2f} seconds.")
             low = mid + 1
         else:
+            if load_time == t:
+                logging.error(f"Loading failed (exceeded maximal time of {t} seconds).")
+            else:
+                logging.error(f"Loading failed due to an error.")
             high = mid - 1
 
     problematic_index = low
@@ -160,15 +164,83 @@ def find_problematic_layer(model, t):
 
         logging.info(f"Problematic layer input: {model.layers[problematic_index].input}")
         logging.info(f"Problematic layer output: {model.layers[problematic_index].output}")
+        return problematic_index
+
     else:
         logging.info("No problematic layer found within the given time threshold.")
 
+def search_graph_backward(model, layer_idx, t):
+    logging.info("Starting backward graph traversal from the problematic layer.")
+
+    # Keep track of visited layers to avoid cycles
+    visited_layers = set()
+    # Stack for DFS traversal
+    stack = []
+    problematic_layers = set()
+
+    # Start from the problematic layer
+    target_layer = model.layers[layer_idx]
+    stack.append(target_layer)
+
+    while stack:
+        current_layer = stack.pop()
+        layer_name = current_layer.name
+
+        if layer_name in visited_layers:
+            continue
+
+        visited_layers.add(layer_name)
+        logging.info(f"Analyzing layer: {layer_name} (Type: {current_layer.__class__.__name__})")
+
+        inbound_nodes = current_layer.inbound_nodes
+        if not inbound_nodes:
+            logging.info(f"Layer {layer_name} has no inbound nodes.")
+            continue
+
+        # Assuming the first inbound node (might need to iterate over all nodes if necessary)
+        inbound_layers = inbound_nodes[0].inbound_layers
+        inbound_layers = [inbound_layers] if not isinstance(inbound_layers, list) else inbound_layers
+
+        while inbound_layers:
+            inbound_layer = inbound_layers.pop()
+            parent_output = inbound_layer.output
+            parent_layer_name = inbound_layer.name
+            submodel = Model(inputs=model.inputs, outputs=parent_output)
+
+            # Save the submodel
+            model_path = f"submodel_{parent_layer_name.replace('/', '$')}.h5"
+            save_model(submodel, model_path)
+
+            # Test loading time
+            success, load_time = test_loading_time(model_path, t)
+
+            # Delete the temporary model file
+            if os.path.exists(model_path):
+                os.remove(model_path)
+
+            if success:
+                logging.info(f"Submodel up to layer {parent_layer_name} loaded successfully in {load_time:.2f} seconds.")
+                if not inbound_layers:
+                    logging.info(f"Problematic layer found: {parent_layer_name}")
+                    problematic_layers.add(inbound_layer.outbound_nodes[0].outbound_layer.name)
+                else:
+                    stack.clear()
+                    stack.extend(inbound_layers)
+            else:
+                if load_time == t:
+                    logging.error(f"Submodel up to layer {parent_layer_name} failed to load (exceeded maximal time of {t} seconds).")
+                else:
+                    logging.error(f"Submodel up to layer {parent_layer_name} failed to load due to an error.")
+                stack.append(parent_output._keras_history.layer)  # Add the parent layer to the stack
+                break
+
 def main(onnx_model_path, t):
     keras_model = get_keras_model(onnx_model_path)
-    find_problematic_layer(keras_model, t)
+    first_layer_idx = find_first_problematic_layer(keras_model, t)
+    search_graph_backward(keras_model, first_layer_idx, t)
 
 if __name__ == '__main__':
-    t = 50  # Time threshold in seconds
+    t = 25  # Time threshold in seconds
     onnx_model_path = 'mod_efficiency.onnx'
 
     # Configure logging and start the queue listener
