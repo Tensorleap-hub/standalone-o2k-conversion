@@ -12,7 +12,7 @@ def get_keras_model(onnx_model_path):
     return keras_model
 
 model = get_keras_model('mod_efficiency.onnx') 
-target_layer_idx = 1167
+target_layer_idx = 1131
 
 target_layer = model.layers[target_layer_idx]
 
@@ -21,6 +21,6 @@ layer_inputs = [layer_input for layer_input in target_layer._inbound_nodes[0].ca
 # Create the new model
 new_model = Model(inputs=model.inputs, outputs=model.layers[target_layer_idx].output)
 
-
+new_model.save('new_model.h5')
 
 new_model.summary()

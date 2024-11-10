@@ -11,6 +11,8 @@ from keras_data_format_converter import convert_channels_first_to_last
 from keras.models import Model
 import tensorflow as tf
 
+logging.getLogger("tensorflow").setLevel(logging.ERROR)
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # Global log queue
 log_queue = multiprocessing.Queue()
 
@@ -70,7 +72,7 @@ def get_keras_model(onnx_model_path):
     input_features = [inp.name for inp in onnx_model.graph.input]
     logging.info(f"Converting ONNX model to Keras model")
     keras_model = onnx_to_keras(onnx_model, input_features).converted_model
-    keras_model = convert_channels_first_to_last(keras_model, should_transform_inputs_and_outputs=False, verbose=True)
+    keras_model = convert_channels_first_to_last(keras_model, should_transform_inputs_and_outputs=True, verbose=True)
     return keras_model
 
 def trim_model(model, index):
@@ -126,7 +128,7 @@ def find_problematic_layers(model, t):
     model_path = 'temp_model.h5'  # Temporary file to save the model
     loading_times = []
     problematic_layers = []
-    initial_layer = 0
+    initial_layer = 900  # Start testing from this layer index
     for idx in range(len(model.layers) - initial_layer):
         idx = idx + initial_layer - 1
         layer_name = model.layers[idx].name
@@ -143,8 +145,8 @@ def find_problematic_layers(model, t):
             load_time = test_loading_time(model_path, t)
 
             # Delete the temporary model file
-            if os.path.exists(model_path):
-                os.remove(model_path)
+            # if os.path.exists(model_path):
+            #     os.remove(model_path)
 
             # Record the loading time
             if load_time is not None:
