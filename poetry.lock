@@ -893,10 +893,13 @@ mypy = ["mypy (==0.600)"]
 [[package]]
 name = "onnx2kerastl"
 version = "0.0.151"
+version = "0.0.151"
 description = ""
 optional = false
 python-versions = "<3.11,>=3.8"
 files = [
+    {file = "onnx2kerastl-0.0.151-py3-none-any.whl", hash = "sha256:cc7c2f3e5fea054f56dd4f8ca548fbed4072095f4231d6763e8677b791d08fa1"},
+    {file = "onnx2kerastl-0.0.151.tar.gz", hash = "sha256:b117bea3ebe70b84c273302e04eec492af6018264a86ee64567deb1884266199"},
     {file = "onnx2kerastl-0.0.151-py3-none-any.whl", hash = "sha256:cc7c2f3e5fea054f56dd4f8ca548fbed4072095f4231d6763e8677b791d08fa1"},
     {file = "onnx2kerastl-0.0.151.tar.gz", hash = "sha256:b117bea3ebe70b84c273302e04eec492af6018264a86ee64567deb1884266199"},
 ]
@@ -1885,4 +1888,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8, <3.11"
-content-hash = "95f05f9d1693ce49307b38d6ffd921c09a537c71e98491effad86f7f36b912ad"
+content-hash = "242cab395c328ab284abcb6e6e70754d68247ff621193bd146d6cb56577f4b6b"
