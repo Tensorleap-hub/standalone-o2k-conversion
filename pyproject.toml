@@ -6,10 +6,12 @@ authors = ["ranhomri <ran.homri@tensorleap.ai>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.8, <3.11"
-onnx2kerastl = "^0.0.151"
+python = ">=3.9, <3.11"
+onnx2kerastl = "^0.0.152"
 tensorflow-macos = "2.11.0"
 pandas = "2.0.0"
+ipykernel = "^6.29.5"
+scipy = "1.13.0"
 
 
 [tool.poetry.group.dev.dependencies]

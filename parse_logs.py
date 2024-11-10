@@ -47,6 +47,6 @@ while i < len(lines):
 
 # Create a DataFrame from the extracted data
 df = pd.DataFrame(data)
+df.to_csv('loading_times.csv', index=False)
 df.plot(x='layer_index', y='loading_time', kind='line', title='Layer Loading Times')
-# Display the DataFrame
-print(df)
+print("Done")

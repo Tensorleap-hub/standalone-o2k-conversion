@@ -11,3 +11,4 @@ sandbox/
 *.h5
 *.onnx
 logs.txt
+*.csv
