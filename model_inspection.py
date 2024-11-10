@@ -126,7 +126,7 @@ def find_first_problematic_layer(model, t):
     model_path = 'temp_model.h5'  # Temporary file to save the model
     loading_times = []
     problematic_layers = []
-    initial_layer = 900
+    initial_layer = 0
     for idx in range(len(model.layers) - initial_layer):
         idx = idx + initial_layer - 1
         layer_name = model.layers[idx].name
