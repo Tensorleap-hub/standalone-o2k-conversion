@@ -192,7 +192,7 @@ def main(onnx_model_path, t):
 
 if __name__ == '__main__':
     t = 120  # Time threshold in seconds
-    onnx_model_path = 'mod_efficiency.onnx'
+    onnx_model_path = 'model.onnx'
 
     # Configure logging and start the queue listener
     queue_listener = configure_main_logger()

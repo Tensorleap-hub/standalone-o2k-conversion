@@ -10,5 +10,5 @@ sandbox/
 # Files
 *.h5
 *.onnx
-logs.txt
+*.txt
 *.csv
