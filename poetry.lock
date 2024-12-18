@@ -1310,13 +1310,13 @@ rich = "*"
 
 [[package]]
 name = "onnx2kerastl"
-version = "0.0.153.dev2"
+version = "0.0.158"
 description = ""
 optional = false
 python-versions = "<3.11,>=3.8"
 files = [
-    {file = "onnx2kerastl-0.0.153.dev2-py3-none-any.whl", hash = "sha256:6b7b0f4120cdabdeb22b48befac9caa1f4fee69915f55abc0b6cc22a40bc2eec"},
-    {file = "onnx2kerastl-0.0.153.dev2.tar.gz", hash = "sha256:3c52001fb437449a8b708c77853be372d750e37f3bffc83fd55fb6937614df40"},
+    {file = "onnx2kerastl-0.0.158-py3-none-any.whl", hash = "sha256:7a958b9b4f702f76fcb3cc85478318ae6977f7b2c247b33174856ba323c8a637"},
+    {file = "onnx2kerastl-0.0.158.tar.gz", hash = "sha256:4f559b3464127154d50253b46603e58cc1849abe0d9c994d052c32f1510c3584"},
 ]
 
 [package.dependencies]
@@ -2701,4 +2701,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9, <3.11"
-content-hash = "78d62bcc35eade267f8bf7812b580d2ac67e7eca3e1e21efa1780e82c3095ab7"
+content-hash = "1360743de8fb39827392702b8bdd4a964157d6430a33097a715a8759f3bbd012"

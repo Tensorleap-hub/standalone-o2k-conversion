@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.11"
-onnx2kerastl = "0.0.153.dev2"
+onnx2kerastl = "^0.0.158"
 tensorflow-macos = "2.11.0"
 pandas = "2.0.0"
 ipykernel = "^6.29.5"
